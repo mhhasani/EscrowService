@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# Env files
+.env
+test.env
+production.env
+
+# Docker
+*.log
+
+# VSCode
+.vscode/
+
+# Local virtualenv
+.venv/
