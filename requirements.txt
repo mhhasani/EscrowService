@@ -1,0 +1,8 @@
+django==5.2.9
+djangorestframework==3.16.1
+mysqlclient==2.1.1
+celery>=5.3,<6.0
+django-celery-beat>=2.6
+drf-yasg>=1.21
+python-dotenv>=1.0
+redis>=5.0
