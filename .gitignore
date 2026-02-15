@@ -15,3 +15,5 @@ production.env
 
 # Local virtualenv
 .venv/
+
+celerybeat-schedule
