@@ -286,7 +286,28 @@ environment variable (defaults to `development`). For example:
 - `DJANGO_ENV=production` will load `production.env`
 - fallback to a generic `.env` if stage-specific file is not present
 
-Examples are included in the repository: `.env`, `test.env`, and `production.env`.
+#### Getting started with environment variables
+
+1. Copy the template file to your local `.env`:
+
+```bash
+cp sample.env .env
+```
+
+2. Edit `.env` with your local database and service credentials:
+
+```bash
+nano .env
+# or use your preferred editor
+```
+
+3. Source the environment or use Docker to run the app (Docker handles env files automatically).
+
+#### Example files included in the repository
+
+- `sample.env` — complete template with all configurable variables (safe to commit).
+- `.env`, `test.env`, and `production.env` — stage-specific examples (do NOT commit real secrets).
+
 Do NOT commit real secrets — put sensitive values in a secure secrets store
 and keep these files out of version control (they are listed in `.gitignore`).
 
