@@ -9,8 +9,6 @@ from rest_framework.test import APIClient
 from .models import Escrow
 from .tasks import expire_funded_escrows
 import threading
-from django.db import connection
-import random
 import time
 
 
