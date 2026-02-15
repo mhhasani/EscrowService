@@ -55,12 +55,16 @@ jobs:
             mysqladmin ping -h127.0.0.1 -uroot -proot && break || sleep 2
           done
 
+      - name: Grant test database permissions to escrow user
+        run: |
+          mysql -h127.0.0.1 -uroot -proot -e "GRANT ALL PRIVILEGES ON test_escrow_service.* TO 'escrow'@'%';"
+
       - name: Run migrations
         env:
           DB_ENGINE: ${{ env.DB_ENGINE }}
           DB_NAME: ${{ env.DB_NAME }}
-          DB_USER: root
-          DB_PASSWORD: root
+          DB_USER: ${{ env.DB_USER }}
+          DB_PASSWORD: ${{ env.DB_PASSWORD }}
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
         run: |
@@ -70,8 +74,8 @@ jobs:
         env:
           DB_ENGINE: ${{ env.DB_ENGINE }}
           DB_NAME: ${{ env.DB_NAME }}
-          DB_USER: root
-          DB_PASSWORD: root
+          DB_USER: ${{ env.DB_USER }}
+          DB_PASSWORD: ${{ env.DB_PASSWORD }}
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
         run: |
