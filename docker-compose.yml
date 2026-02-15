@@ -1,0 +1,96 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: escrow_service
+      MYSQL_USER: escrow
+      MYSQL_PASSWORD: escrow
+      MYSQL_ROOT_PASSWORD: root
+      # Optional: test database name used by CI/test runner
+      DB_TEST_NAME: test_escrow_service
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  web:
+    build: .
+    restart: unless-stopped
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      DJANGO_DEBUG: "true"
+      DJANGO_ALLOWED_HOSTS: "*"
+      DB_ENGINE: django.db.backends.mysql
+      DB_NAME: escrow_service
+      DB_USER: escrow
+      DB_PASSWORD: escrow
+      DB_HOST: db
+      DB_PORT: "3306"
+      # Optional override for test DB name
+      DB_TEST_NAME: test_escrow_service
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  celery-worker:
+    build: .
+    restart: unless-stopped
+    command: celery -A escrow_service worker -l info
+    environment:
+      DJANGO_DEBUG: "true"
+      DJANGO_ALLOWED_HOSTS: "*"
+      DB_ENGINE: django.db.backends.mysql
+      DB_NAME: escrow_service
+      DB_USER: escrow
+      DB_PASSWORD: escrow
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_TEST_NAME: test_escrow_service
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+
+  celery-beat:
+    build: .
+    restart: unless-stopped
+    command: celery -A escrow_service beat -l info
+    environment:
+      DJANGO_DEBUG: "true"
+      DJANGO_ALLOWED_HOSTS: "*"
+      DB_ENGINE: django.db.backends.mysql
+      DB_NAME: escrow_service
+      DB_USER: escrow
+      DB_PASSWORD: escrow
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_TEST_NAME: test_escrow_service
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  db_data:
+
